@@ -29,7 +29,7 @@
  * http://www.openflowhub.org/display/Floodlight/Floodlight+Home
  **/
 
-package edu.columbia.cs6998.sdn.hw1;
+package edu.columbia.cs6998.sdn.project;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,9 +68,9 @@ import org.openflow.util.LRULinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Hw1Switch 
+public class Switch 
     implements IFloodlightModule, IOFMessageListener {
-    protected static Logger log = LoggerFactory.getLogger(Hw1Switch.class);
+    protected static Logger log = LoggerFactory.getLogger(Switch.class);
     
     // Module dependencies
     protected IFloodlightProviderService floodlightProvider;
@@ -88,12 +88,12 @@ public class Hw1Switch
 */
 
     // flow-mod - for use in the cookie
-    public static final int HW1_SWITCH_APP_ID = 10;
+    public static final int SWITCH_APP_ID = 10;
     // LOOK! This should probably go in some class that encapsulates
     // the app cookie management
     public static final int APP_ID_BITS = 12;
     public static final int APP_ID_SHIFT = (64 - APP_ID_BITS);
-    public static final long HW1_SWITCH_COOKIE = (long) (HW1_SWITCH_APP_ID & ((1 << APP_ID_BITS) - 1)) << APP_ID_SHIFT;
+    public static final long SWITCH_COOKIE = (long) (SWITCH_APP_ID & ((1 << APP_ID_BITS) - 1)) << APP_ID_SHIFT;
     
     // more flow-mod defaults 
     protected static final short IDLE_TIMEOUT_DEFAULT = 10;
@@ -123,7 +123,7 @@ public class Hw1Switch
     
     @Override
     public String getName() {
-        return "hw1switch";
+        return "switch";
     }
 
     /**
@@ -204,11 +204,11 @@ public class Hw1Switch
         //    };
         OFFlowMod flowMod = (OFFlowMod) floodlightProvider.getOFMessageFactory().getMessage(OFType.FLOW_MOD);
         flowMod.setMatch(match);
-        flowMod.setCookie(Hw1Switch.HW1_SWITCH_COOKIE);
+        flowMod.setCookie(Switch.SWITCH_COOKIE);
         flowMod.setCommand(command);
-        flowMod.setIdleTimeout(Hw1Switch.IDLE_TIMEOUT_DEFAULT);
-        flowMod.setHardTimeout(Hw1Switch.HARD_TIMEOUT_DEFAULT);
-        flowMod.setPriority(Hw1Switch.PRIORITY_DEFAULT);
+        flowMod.setIdleTimeout(Switch.IDLE_TIMEOUT_DEFAULT);
+        flowMod.setHardTimeout(Switch.HARD_TIMEOUT_DEFAULT);
+        flowMod.setPriority(Switch.PRIORITY_DEFAULT);
         flowMod.setBufferId(bufferId);
         flowMod.setOutPort((command == OFFlowMod.OFPFC_DELETE) ? outPort : OFPort.OFPP_NONE.getValue());
         flowMod.setFlags((command == OFFlowMod.OFPFC_DELETE) ? 0 : (short) (1 << 0)); // OFPFF_SEND_FLOW_REM
@@ -359,7 +359,7 @@ public class Hw1Switch
      * @return Whether to continue processing this message or stop.
      */
 /*    private Command processFlowRemovedMessage(IOFSwitch sw, OFFlowRemoved flowRemovedMessage) {
-        if (flowRemovedMessage.getCookie() != Hw1Switch.HW1_SWITCH_COOKIE) {
+        if (flowRemovedMessage.getCookie() != Switch.SWITCH_COOKIE) {
             return Command.CONTINUE;
         }
 
