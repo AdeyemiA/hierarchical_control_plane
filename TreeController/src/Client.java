@@ -10,18 +10,21 @@ import java.util.Scanner;
 public class Client {
 	public static void main(String[] argv) throws NumberFormatException, UnknownHostException, IOException{
 		
-		Socket socket = new Socket(argv[1], Integer.parseInt(argv[2]));
+		Socket socket = new Socket(argv[0], Integer.parseInt(argv[1]));
 		PrintWriter pw = new PrintWriter(socket.getOutputStream());
 		BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		
 		System.out.println("#####################");
 		System.out.println("#     HCP Client    #");
 		System.out.println("#####################");
+		System.out.print(">");
 		Scanner scanner = new Scanner(System.in);
 		String line = "";
 		while(!(line=scanner.nextLine()).equals("exit")){
 			pw.println(line);
+			pw.flush();
 			System.out.println(br.readLine());
+			System.out.print(">");
 		}
 		
 		pw.close();
