@@ -23,6 +23,8 @@ public class Client {
 		while(!(line=scanner.nextLine()).equals("exit")){
 			pw.println(line);
 			pw.flush();
+			if(line.equals("shutdown"))
+				break;
 			System.out.println(br.readLine());
 			System.out.print(">");
 		}

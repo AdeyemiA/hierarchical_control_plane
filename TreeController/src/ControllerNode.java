@@ -17,7 +17,18 @@ public class ControllerNode {
 	public int port;
 	
 	public String process(String command){
-		return "OK";
+		String result = "";
+		String[] tokens = command.split(" ");
+		if(tokens[0].equals("add")){
+			
+		}else if(tokens[0].equals("remove")){
+			
+		}else if(tokens[0].equals("getport")){
+			
+		}else{
+			result = "Wrong command! Try help";
+		}
+		return result;
 	}
 	
 	public class ChildThread implements Runnable{
@@ -36,6 +47,8 @@ public class ControllerNode {
 				String line = "";
 				while((line = br.readLine())!=null){
 					System.out.println(line);
+					if(line.equals("shutdown"))
+						System.exit(0);
 					pw.println(process(line));
 					pw.flush();
 				}
