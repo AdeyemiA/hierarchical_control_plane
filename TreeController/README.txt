@@ -4,6 +4,11 @@ How to build from scratch:
 1. javac *.java
 2. java start (<configFileName>)
 
+e.g. config.txt
+port=10001
+parent=127.0.0.1:10000
+children=127.0.0.1:10002;127.0.0.1:10003
+
 How to build with eclipse:
 import into eclipse and right click "start.java" and choose "run as java application"
 
