@@ -8,9 +8,9 @@ Name:
   Hierarchical Control Plane
 
 Members:
-  Adeyemi Aladesawe
-  Yuanhui Luo
-  Zhen Qiu
+  Adeyemi Aladesawe,
+  Yuanhui Luo,
+  Zhen Qiu,
   Zhicheng Wan
   
 How to build:
