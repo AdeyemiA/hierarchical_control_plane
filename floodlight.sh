@@ -4,9 +4,9 @@
 FL_HOME=`dirname $0`
 FL_JAR="${FL_HOME}/lib/floodlight.jar"
 FL_LOGBACK="${FL_HOME}/logback.xml"
-HW_JAR="${FL_HOME}/target/hw1.jar"
+HW_JAR="${FL_HOME}/target/project.jar"
 FLOODLIGHTDIR="${FL_HOME}/floodlight"
-FL_PROPERTYFILE="${FL_HOME}/resources/floodlighthw1.properties"
+FL_PROPERTYFILE="${FL_HOME}/resources/floodlight.properties"
 
 # Set JVM options
 JVM_OPTS=""
