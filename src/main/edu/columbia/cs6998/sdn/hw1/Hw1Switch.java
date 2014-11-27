@@ -77,15 +77,16 @@ public class Hw1Switch
     
 /* CS6998: data structures for the learning switch feature
     // Stores the learned state for each switch
-    protected Map<IOFSwitch, Map<Long, Short>> macToSwitchPortMap;
 */
+    protected Map<IOFSwitch, Map<Long, Short>> macToSwitchPortMap;
+
 
 /* CS6998: data structures for the firewall feature
     // Stores the MAC address of hosts to block: <Macaddr, blockedTime>
+*/
     protected Map<Long, Long> blacklist;
 
-    ...more
-*/
+    
 
     // flow-mod - for use in the cookie
     public static final int HW1_SWITCH_APP_ID = 10;
@@ -133,17 +134,18 @@ public class Hw1Switch
      * @param portVal The switchport that the host is on
      */
 /* CS6998: fill out the following ????s
+ */
     protected void addToPortMap(IOFSwitch sw, long mac, short portVal) {
-        Map<Long, Short> swMap = ????;
+        Map<Long, Short> swMap = macToSwitchPortMap.get(sw);
         
         if (swMap == null) {
             // May be accessed by REST API so we need to make it thread safe
             swMap = Collections.synchronizedMap(new LRULinkedHashMap<Long, Short>(MAX_MACS_PER_SWITCH));
-            macToSwitchPortMap.put(????);
+            macToSwitchPortMap.put(sw, swMap);
         }
-        swMap.put(????);
+        swMap.put(mac, portVal);
     }
-*/
+
     
     /**
      * Removes a host from the MAC->SwitchPort mapping
@@ -151,12 +153,13 @@ public class Hw1Switch
      * @param mac The MAC address of the host to remove
      */
 /* CS6998: fill out the following ????s
-    protected void removeFromPortMap(IOFSwitch sw, long mac) {
-        Map<Long, Short> swMap = macToSwitchPortMap.????
-        if (swMap != null)
-            ????
-    }
 */
+   protected void removeFromPortMap(IOFSwitch sw, long mac) {
+        Map<Long, Short> swMap = macToSwitchPortMap.get(sw);
+        if (swMap != null)
+            swMap.remove(mac);
+    }
+
 
     /**
      * Get the port that a MAC is associated with
@@ -165,10 +168,15 @@ public class Hw1Switch
      * @return The port the host is on
      */
 /* CS6998: fill out the following method
-    public Short getFromPortMap(IOFSwitch sw, long mac) {
-        ....
-    }
 */
+   public Short getFromPortMap(IOFSwitch sw, long mac) {
+        Map<Long, Short> swMap = macToSwitchPortMap.get(sw);
+        if (swMap != null)
+            return swMap.get(mac);
+
+        return null;
+    }
+
     
     /**
      * Writes a OFFlowMod to a switch.
@@ -308,7 +316,8 @@ public class Hw1Switch
 /* CS6998: Do works here to learn the port for this MAC
         ....
 */
-
+        this.addToPortMap(sw, sourceMac, pi.getInPort());
+       
 /* CS6998: Do works here to implement super firewall
         Hint: You may check connection limitation here.
         ....
@@ -324,16 +333,17 @@ public class Hw1Switch
 /* CS6998: Ask the switch to flood the packet to all of its ports
  *         Thus, this module currently works as a dummy hub
  */
-        this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
+       // this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
 
 /* CS6998: Ask the switch to flood the packet to all of its ports
         // Now output flow-mod and/or packet
         // CS6998: Fill out the following ???? to obtain outPort
-        Short outPort = ....;
+    */
+        Short outPort = getFromPortMap(sw, destMac);
         if (outPort == null) {
             // If we haven't learned the port for the dest MAC, flood it
             // CS6998: Fill out the following ????
-            this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_????.getValue());
+            this.writePacketOutForPacketIn(sw, pi, OFPort.OFPP_FLOOD.getValue());
         } else if (outPort == match.getInputPort()) {
             log.trace("ignoring packet that arrived on same port as learned destination:"
                     + " switch {} dest MAC {} port {}",
@@ -346,9 +356,9 @@ public class Hw1Switch
                     & ~OFMatch.OFPFW_DL_SRC & ~OFMatch.OFPFW_DL_DST
                     & ~OFMatch.OFPFW_NW_SRC_MASK & ~OFMatch.OFPFW_NW_DST_MASK);
             // CS6998: Fill out the following ????
-            this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, pi.getBufferId(), match, ????);
+            this.writeFlowMod(sw, OFFlowMod.OFPFC_ADD, pi.getBufferId(), match, outPort);
         }
-*/
+
         return Command.CONTINUE;
     }
 
@@ -443,11 +453,12 @@ public class Hw1Switch
         floodlightProvider =
                 context.getServiceImpl(IFloodlightProviderService.class);
 /* CS6998: Initialize data structures
-        macToSwitchPortMap = 
+*/
+       macToSwitchPortMap = 
                 new ConcurrentHashMap<IOFSwitch, Map<Long, Short>>();
         blacklist =
                 new HashMap<Long, Long>();
-*/
+
     }
 
     @Override
