@@ -7,11 +7,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -25,29 +33,82 @@ import net.floodlightcontroller.devicemanager.web.DeviceResource;
  * @author ubuntu
  *
  */
-public class QuerySwitch {
-
+public class QuerySwitch extends Switch {
+	private Map<Long, List<Object>> hostMap;
+	
+	public void addHost(Long mac, String hostname, int ip, int port) {
+		List<Object> hostObject = new ArrayList<Object>();
+		hostObject.add(hostname);
+		hostObject.add(ip);
+		hostObject.add(port);
+		this.hostMap.put(mac, hostObject);
+	}
+	
+	public QuerySwitch() {
+		this.hostMap = new HashMap<Long, List<Object>>();
+	}
+	
+	public Map<Long, List<Object>> getHostMap() {
+		return hostMap;
+	}
 	/**
 	 * @param args
 	 * @throws IOException 
+	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-		// get requests using floodlight REST API
+		QuerySwitch sw = new QuerySwitch();
+		sw.addHost(1234567893L, "hostname", 167777771, 1);
+		System.out.println(sw.getHostMap());
 		
-	    String httpURL = "http://localhost:8080/wm/core/controller/switches/json";
-	    URL myurl = new URL(httpURL);
-	    HttpURLConnection connection = (HttpURLConnection)myurl.openConnection();
-	    InputStream inputStream = connection.getInputStream();
-	    InputStreamReader inputStreamReader= new InputStreamReader(inputStream);
-	    BufferedReader bufferedRead = new BufferedReader(inputStreamReader);
-	    String inputLine;
+		//Switch newSwitch = new Switch();
+		//newSwitch.startUp(context);
+/*		try {
+		    String httpURL = "http://localhost:8080/wm/core/controller/switches/json";
+		    URL myurl = new URL(httpURL);
+		    HttpURLConnection connection = (HttpURLConnection)myurl.openConnection();
+		    InputStream inputStream = connection.getInputStream();
+		    InputStreamReader inputStreamReader= new InputStreamReader(inputStream);
+		    BufferedReader bufferedRead = new BufferedReader(inputStreamReader);
+		    String inputLine;
+		 
+		    while ((inputLine = bufferedRead.readLine()) != null)
+		    {
+		      System.out.println(inputLine);
+		    }
+		    bufferedRead.close();
+		} catch(IOException e) {
+			System.out.println("Make sure the controller is running");
+		}*/
 	 
-	    while ((inputLine = bufferedRead.readLine()) != null)
-	    {
-	      System.out.println(inputLine);
-	    }
-	 
-	    bufferedRead.close();
+	    
+	    InetAddress hostName = Inet4Address.getLoopbackAddress();
+	    int portNumber = 6644;
+	    System.out.println(hostName);
+        try (
+            Socket echoSocket = new Socket(hostName, portNumber);
+            PrintWriter out =
+                new PrintWriter(echoSocket.getOutputStream(), true);
+            BufferedReader in =
+                new BufferedReader(
+                    new InputStreamReader(echoSocket.getInputStream()));
+            BufferedReader stdIn =
+                new BufferedReader(
+                    new InputStreamReader(System.in))
+        ) {
+            String userInput;
+            while ((userInput = stdIn.readLine()) != null) {
+                out.println(userInput);
+                System.out.println("echo: " + in.readLine());
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Don't know about host " + hostName);
+            System.exit(1);
+        } catch (IOException e) {
+            System.err.println("Couldn't get I/O for the connection to " +
+                hostName);
+            System.exit(1);
+        }
 	}
 
 }

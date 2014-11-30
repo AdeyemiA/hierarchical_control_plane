@@ -1,21 +1,26 @@
 /**
- * 
+ *  This interface describes the methods to be 
+ *  remotely executed on the Parent Controller
+ *  by the child controller
  */
 package edu.columbia.cs6998.sdn.project;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
  * @author ubuntu
  *
  */
-public interface Action {
-	public void addHost(ControllerNode parent, String hostname, String mac, String ip, int port);
-	public void addHost(ControllerNode parent, String hostname, Long mac, String ip, int port);
-	public void addGswitch(ControllerNode parent, String gswitchId, int port);
-	public void removeHost(ControllerNode parent, String hostname);
-	public void removeGswitch(ControllerNode parent, String gswitchId);
-	public int getPort(String hostname);
-	public int getPort(String mac);
-	public int getPort(Long mac);
-	public int getPort(String ip);
+public interface Action extends Remote {
+	public void addHost(String hostname, String mac, int ip, int port) throws RemoteException;
+	public void addHost(String hostname, Long mac, int ip, int port) throws RemoteException;
+	public void addGswitch(String gswitchId, int port) throws RemoteException;
+	public void removeHost(String hostname) throws RemoteException;
+	public void removeHost(Long mac) throws RemoteException;
+	public void removeGswitch(String gswitchId) throws RemoteException;
+	public int getHostPort(String mac) throws RemoteException;
+	public int getHostPort(Long mac) throws RemoteException;
+	public int getHostPort(int ip) throws RemoteException;
 	public boolean discoverGswitchLink(String controllerId, String gswitchId, int port);
 }
