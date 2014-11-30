@@ -583,7 +583,7 @@ public class Switch
         floodlightProvider.addOFMessageListener(OFType.PACKET_IN, this);
         floodlightProvider.addOFMessageListener(OFType.FLOW_REMOVED, this);
         floodlightProvider.addOFMessageListener(OFType.ERROR, this);
-	    InetAddress hostName = Inet4Address.getLoopbackAddress();
+/*	    InetAddress hostName = Inet4Address.getLoopbackAddress();
 	    int portNumber = 6644;
 	    System.out.println(hostName);
         try (
@@ -609,7 +609,7 @@ public class Switch
             System.err.println("Couldn't get I/O for the connection to " +
                 hostName);
             System.exit(1);
-        }
+        }*/
     }
     
     class Block implements Runnable {

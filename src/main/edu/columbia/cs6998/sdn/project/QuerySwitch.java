@@ -15,6 +15,8 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +33,8 @@ import net.floodlightcontroller.devicemanager.web.DeviceResource;
 
 /**
  * @author ubuntu
+ * 
+ * This is the child controller
  *
  */
 public class QuerySwitch extends Switch {
@@ -57,9 +61,23 @@ public class QuerySwitch extends Switch {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-		QuerySwitch sw = new QuerySwitch();
+
+		/**
+		 *  execute remote methods on default port 1099
+		 */
+        try {
+            Registry registry = LocateRegistry.getRegistry();
+            Action stub = (Action) registry.lookup("Action");
+            stub.addGswitch("GS1", 1);
+            stub.addHost("Host1", 167777777L, 167772161, 1);
+            System.out.println("Host1 is connected to port " + stub.getHostPort(167777777L));
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+/*		QuerySwitch sw = new QuerySwitch();
 		sw.addHost(1234567893L, "hostname", 167777771, 1);
-		System.out.println(sw.getHostMap());
+		System.out.println(sw.getHostMap());*/
 		
 		//Switch newSwitch = new Switch();
 		//newSwitch.startUp(context);
@@ -82,7 +100,7 @@ public class QuerySwitch extends Switch {
 		}*/
 	 
 	    
-	    InetAddress hostName = Inet4Address.getLoopbackAddress();
+/*	    InetAddress hostName = Inet4Address.getLoopbackAddress();
 	    int portNumber = 6644;
 	    System.out.println(hostName);
         try (
@@ -108,7 +126,7 @@ public class QuerySwitch extends Switch {
             System.err.println("Couldn't get I/O for the connection to " +
                 hostName);
             System.exit(1);
-        }
+        }*/
 	}
 
 }
